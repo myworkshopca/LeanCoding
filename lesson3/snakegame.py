@@ -6,7 +6,7 @@ def board(stdscr):
   # turn off the cursor1
   curses.curs_set(0)
   # turn on nodelay to make the snake moving by itself.
-  stdscr.nodelay(1)
+  stdscr.nodelay(0)
   # set the timeout to 0.1 second
   stdscr.timeout(100)
 
@@ -44,6 +44,7 @@ def board(stdscr):
     if key == 27:
       break;
 
+    # decide the direction based on user's input key:
     if key == curses.KEY_UP:
       direction = curses.KEY_UP
     elif key == curses.KEY_RIGHT:
@@ -56,7 +57,6 @@ def board(stdscr):
     # here is how we move the snake one cell to right
     # Step 1, figure out the new head.
     head = snake[0]
-    # decide the direction based on user's input key:
     if direction == curses.KEY_UP:
       new_head = [head[0] - 1, head[1]]
     elif direction == curses.KEY_RIGHT:
@@ -73,5 +73,9 @@ def board(stdscr):
     stdscr.addstr(snake[-1][0], snake[-1][1], ' ')
     # remove the tail cell from snake.
     snake.pop()
+
+    # check if the snake with new head touch the game border.
+    snake[0][0]
+    snake[0][1]
 
 curses.wrapper(board)
