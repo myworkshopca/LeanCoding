@@ -1,8 +1,7 @@
+
+new_head = [3, 0]
+# y axis of new head
+print(new_head[0])
+print(new_head[1])
+
 # define a list
-alist = ['abc', "cde", 21, 0]
-
-for a in "somehting here":
-  print(a)
-
-for item in alist:
-  print(item)

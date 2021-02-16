@@ -1,5 +1,6 @@
 import curses
 from curses import textpad
+import random
 
 def board(stdscr):
 
@@ -43,6 +44,15 @@ def board(stdscr):
   # define the direction for snake to move.
   direction = curses.KEY_RIGHT
 
+  # setup a variable for food location.
+  food = [
+    random.randint(box[0][0], box[1][0] - 1),
+    random.randint(box[0][1], box[1][1] - 1)
+  ]
+  food_ch = "*"
+  # paint the food
+  stdscr.addstr(food[0], food[1], food_ch)
+
   while True:
 
     # collect player's keyboard input
@@ -78,12 +88,23 @@ def board(stdscr):
     stdscr.addstr(new_head[0], new_head[1], snake_ch)
     # update the snake variable.
     snake.insert(0, new_head)
-    # erase current tail on the board.
+
+    # get current tail on the board.
     tail = snake[-1]
-    stdscr.addstr(tail[0], tail[1], ' ')
-    # remove the tail point from the snake variable
-    # pop function will pop out (remove) the last item of a list.
-    snake.pop()
+    if new_head == food:
+      # grow the snake by NOT erase the tail.
+      # generate new food and paint it.
+      food = [
+        random.randint(box[0][0], box[1][0] - 1),
+        random.randint(box[0][1], box[1][1] - 1)
+      ]
+      stdscr.addstr(food[0], food[1], food_ch)
+    else:
+      # erase tail
+      stdscr.addstr(tail[0], tail[1], ' ')
+      # remove the tail point from the snake variable
+      # pop function will pop out (remove) the last item of a list.
+      snake.pop()
 
     # if head of the snake touch any of the border, GAME OVER!
     if (snake[0][0] == box[0][0] or
