@@ -23,7 +23,7 @@ def initfield(center, size):
     i = 0 # track the bomb count.
     while i < math.prod(size) // 7:
         index = random.randint(0, math.prod(size) - 1)
-        # figure our r c
+        # figure out r c
         r = index // size[1]
         c = index - r * size[1]
         if field[r][c][2] == -1:
@@ -36,7 +36,7 @@ def initfield(center, size):
     for r in range(0, size[0]):
         for c in range(0, size[1]):
             if field[r][c][2] == -1:
-                # this cell has bomb
+                # this cell has bombk
                 continue
 
             for sr in [r - 1, r, r + 1]:
@@ -66,7 +66,7 @@ def sweeper(stdscr):
     sh, sw = stdscr.getmaxyx()
     center = [sh // 2, sw // 2]
 
-    size = [10, 20]
+    size = [20, 30]
     field = initfield(center, size)
 
     paintfield(stdscr, field, size)
