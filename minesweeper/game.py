@@ -63,6 +63,8 @@ def paintfield(stdscr, field, size):
 
 def sweeper(stdscr):
 
+    curses.curs_set(0)
+
     sh, sw = stdscr.getmaxyx()
     center = [sh // 2, sw // 2]
 
@@ -71,7 +73,29 @@ def sweeper(stdscr):
 
     paintfield(stdscr, field, size)
 
-    stdscr.getch()
+    r, c = 0, 0
+    nr, nc = 0, 0 
+    stdscr.addstr(field[r][c][0], field[r][c][1], str(field[r][c][2]), curses.A_REVERSE)
 
-#curses.wrapper(sweeper)
-print(initfield([20, 20], [4, 4])
+    while True:
+
+        userkey = stdscr.getch()
+
+        if userkey == 29:
+            break
+        elif userkey == curses.KEY_RIGHT:
+            nr = r
+            nc = c + 1
+        elif userkey == curses.KEY_LEFT:
+            nr = r
+            nc = c - 1
+
+        # paint the current cell normally
+        stdscr.addstr(field[r][c][0], field[r][c][1], str(field[r][c][2]))
+        # the new cell reverse.
+        stdscr.addstr(field[nr][nc][0], field[nr][nc][1], str(field[nr][nc][2]), curses.A_REVERSE)
+        r = nr
+        c = nc
+
+curses.wrapper(sweeper)
+#print(initfield([20, 20], [4, 4]))

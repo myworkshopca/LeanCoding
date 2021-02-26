@@ -3,7 +3,7 @@ from curses import textpad
 
 def board(stdscr):
 
-  # turn off the cursor1
+  # turn off the cursor
   curses.curs_set(0)
   # turn on nodelay to make the snake moving by itself.
   stdscr.nodelay(0)
