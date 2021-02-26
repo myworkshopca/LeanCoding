@@ -6,18 +6,18 @@ def initfield(center, size):
 
     field = []
 
-    r, c = 0, 0
+    r = 0
     # nested loop
     for y in range(center[0] - size[0] // 2, center[0] + size[0] // 2):
         # go through each row.
-        field.append([[0, 0, 0]] * size[1])
+        field.append([ ])
         for x in range(center[1] - size[1], center[1] + size[1], 2):
             # go through each column of a row
-            field[r][c] = [y, x, 0]
+            field[r].append([y, x, 0])
             #stdscr.addstr(y, x, chr(9608))
-            c = c + 1
+            #c = c + 1
         r = r + 1
-        c = 0
+        #c = 0
 
     # generate the bombs!
     i = 0 # track the bomb count.
@@ -73,4 +73,5 @@ def sweeper(stdscr):
 
     stdscr.getch()
 
-curses.wrapper(sweeper)
+#curses.wrapper(sweeper)
+print(initfield([20, 20], [4, 4])
