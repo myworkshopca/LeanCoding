@@ -61,6 +61,31 @@ def paintfield(stdscr, field, size):
                 #stdscr.addstr(field[r][c][0], field[r][c][1], chr(9608))
                 stdscr.addstr(field[r][c][0], field[r][c][1], str(field[r][c][2]))
 
+def colordict():
+
+    curses.start_color()
+    curses.use_default_colors()
+
+    for i in range(0, curses.COLORS):
+        curses.init_pair(i + 1, i, -1)
+
+    return {
+        'cover': curses.color_pair(9),
+        "flag": curses.color_pair(12), # yellow
+        "blasted": curses.color_pair(233),
+        #"-1": curses.color_pair(16),
+        "-1": curses.color_pair(53),
+        "0": curses.color_pair(1),
+        "1": curses.color_pair(13), # blue
+        "2": curses.color_pair(48), # Green
+        "3": curses.color_pair(10), # red
+        "4": curses.color_pair(52), #
+        "5": curses.color_pair(94), #
+        "6": curses.color_pair(203), #
+        "7": curses.color_pair(90), #
+        "8": curses.color_pair(178), #
+    }
+
 def sweeper(stdscr):
 
     curses.curs_set(0)
