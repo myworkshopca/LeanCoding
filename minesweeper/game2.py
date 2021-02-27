@@ -12,7 +12,7 @@ def initfield(center, size):
     field.append([])
     for x in range(center[1] - size[1], center[1] + size[1], 2):
       #stdscr.addstr(y, x, chr(9608))
-      field[r].append([y,x,0])
+      field[r].append([y,x,0,"covered"])
 
     r = r + 1
     # reset column Index
@@ -79,23 +79,42 @@ def colordict():
         "8": curses.color_pair(178), #
   }
 
-def paintcell(stdscr, cell, colors, reverse=False):
+def paintcell(stdscr, cell, colors, reverse=False, show=False):
   
   # decide the cell character and cell color
   cell_ch = chr(9608)
   cell_color = colors['cover']
 
-  if cell[2] == -1:
-    cell_ch = chr(10041)
-    cell_color = colors["-1"]
-  else:
-    cell_ch = str(cell[2])
-    cell_color = colors[str(cell[2])]
+  # check the status of each cell.
+  if cell[3] == "flagged":
+    cell_ch = chr(9873)
+    cell_color = colors['flag']
+
+  if show:
+    if cell[2] == -1:
+      cell_ch = chr(10041)
+      cell_color = colors["-1"]
+    else:
+      cell_ch = str(cell[2])
+      cell_color = colors[str(cell[2])]
 
   if reverse:
     cell_color = curses.A_REVERSE
 
   stdscr.addstr(cell[0], cell[1], cell_ch, cell_color)
+
+def flagcell(cell):
+
+  if cell[3] == "flagged":
+    cell[3] = "covered"
+  elif cell[3] == "covered":
+    cell[3] = "flagged"
+
+def digcell():
+  return
+
+def opensurrounding():
+  return
 
 def sweeper(stdscr):
 
@@ -134,6 +153,13 @@ def sweeper(stdscr):
     elif userkey in [curses.KEY_UP]:
       if r > 0:
         nr = r - 1
+    elif userkey in [102]:
+      # flag cell
+      flagcell(field[r][c])
+    elif userkey in [100]:
+      digcell()
+    elif userkey in [32]:
+      opensurrounding()
 
     # paint the current cell normally 
     paintcell(stdscr, field[r][c], colors, False)
