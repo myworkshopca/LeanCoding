@@ -82,15 +82,20 @@ def colordict():
         "8": curses.color_pair(178), #
     }
 
-def paintcell(stdscr, cell, colors, reverse=False):
+def paintcell(stdscr, cell, colors, reverse=False, show=False):
 
-    # decide the cell character and color.
-    if cell[2] == -1:
-        cell_ch = chr(10041)
-    else:
-        cell_ch = str(cell[2])
+    cell_ch = chr(9608)
+    cell_color = colors['cover']
 
-    cell_color = colors[str(cell[2])]
+    if show:
+        # decide the cell character and color.
+        if cell[2] == -1:
+            cell_ch = chr(10041)
+        else:
+            cell_ch = str(cell[2])
+
+        cell_color = colors[str(cell[2])]
+    
     if reverse:
         cell_color = curses.A_REVERSE
 
@@ -112,28 +117,34 @@ def sweeper(stdscr):
     r, c = 0, 0
     paintcell(stdscr, field[r][c], colors, True)
     #stdscr.addstr(field[r][c][0]
+    nr, nc = 0, 0
 
-    stdscr.getch()
+    while True:
+        userkey = stdscr.getch()
+        # 113 q
+        if userkey in [27, 113]:
+            break
 
-    #while True:
+        elif userkey == curses.KEY_RIGHT:
+            if c < size[1] - 1:
+                nc = c + 1
+        elif userkey == curses.KEY_LEFT:
+            if c > 0:
+                nc = c - 1
+        elif userkey == curses.KEY_DOWN:
+            if r < size[0] - 1: 
+                nr = r + 1
+        elif userkey == curses.KEY_UP:
+            if r > 0:
+                nr = r - 1
 
-    #    userkey = stdscr.getch()
-
-    #    if userkey == 29:
-    #        break
-    #    elif userkey == curses.KEY_RIGHT:
-    #        nr = r
-    #        nc = c + 1
-    #    elif userkey == curses.KEY_LEFT:
-    #        nr = r
-    #        nc = c - 1
-
-    #    # paint the current cell normally
-    #    stdscr.addstr(field[r][c][0], field[r][c][1], str(field[r][c][2]))
-    #    # the new cell reverse.
-    #    stdscr.addstr(field[nr][nc][0], field[nr][nc][1], str(field[nr][nc][2]), curses.A_REVERSE)
-    #    r = nr
-    #    c = nc
+        # paint the current cell normally
+        paintcell(stdscr, field[r][c], colors)
+        # the new cell reverse.
+        paintcell(stdscr, field[nr][nc], colors, True)
+        # reset current cell's index.
+        r = nr
+        c = nc
 
 curses.wrapper(sweeper)
 #print(initfield([20, 20], [4, 4]))
