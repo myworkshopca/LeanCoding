@@ -9,14 +9,13 @@ def initfield(center, size):
 
   r, c = 0, 0
   for y in range(center[0] - size[0] // 2, center[0] + size[0] // 2):
-    field.append([[0]] * size[1])
+    field.append([])
     for x in range(center[1] - size[1], center[1] + size[1], 2):
       #stdscr.addstr(y, x, chr(9608))
-      field[r][c] = [y,x,0]
-      c = c + 1
+      field[r].append([y,x,0])
+
     r = r + 1
     # reset column Index
-    c = 0
 
   #genterate bombs.
   i = 0
@@ -49,27 +48,79 @@ def initfield(center, size):
 
   return field
 
-def paintfield(stdscr, field, size):
+def paintfield(stdscr, field, size, colors):
 
     for r in range(0, size[0]):
         for c in range(0, size[1]):
-            if field[r][c][2] == -1:
-                stdscr.addstr(field[r][c][0], field[r][c][1], chr(10041))
-            else:
-                #stdscr.addstr(field[r][c][0], field[r][c][1], chr(9608))
-                stdscr.addstr(field[r][c][0], field[r][c][1], str(field[r][c][2]))
+            paintcell(stdscr, field[r][c], colors)
+
+def colordict():
+
+  curses.start_color()
+  curses.use_default_colors()
+
+  for i in range(0, curses.COLORS):
+    curses.init_pair(i + 1, i , -1)
+
+  return {
+        "cover": curses.color_pair(9),
+        "flag": curses.color_pair(12), # yellow
+        "blasted": curses.color_pair(233),
+        #"-1": curses.color_pair(16),
+        "-1": curses.color_pair(53),
+        "0": curses.color_pair(1),
+        "1": curses.color_pair(13), # blue
+        "2": curses.color_pair(48), # Green
+        "3": curses.color_pair(10), # red
+        "4": curses.color_pair(52), # 
+        "5": curses.color_pair(94), # 
+        "6": curses.color_pair(203), # 
+        "7": curses.color_pair(90), # 
+        "8": curses.color_pair(178), #
+  }
+
+def paintcell(stdscr, cell, colors, reverse=False):
+  
+  # decide the cell character and cell color
+  cell_ch = chr(9608)
+  cell_color = colors['cover']
+
+  if cell[2] == -1:
+    cell_ch = chr(10041)
+    cell_color = colors["-1"]
+  else:
+    cell_ch = str(cell[2])
+    cell_color = colors[str(cell[2])]
+
+  stdscr.addstr(cell[0], cell[1], cell_ch, cell_color)
 
 def sweeper(stdscr):
 
+  curses.curs_set(0)
+
   sh, sw = stdscr.getmaxyx()
   center = [sh // 2, sw // 2]
+  colors = colordict()
 
   # set this a list [row, column]
   size = [10, 30]
 
   field = initfield(center, size)
-  paintfield(stdscr, field, size)
+  paintfield(stdscr, field, size, colors)
 
-  stdscr.getch()
+  r, c = 0, 0
+  nr, nc = 0, 0
+  # paint the top left cell reverse color.
+  stdscr.addstr(field[r][c][0], field[r][c][1], str(field[r][c][2]), curses.A_REVERSE)
+
+  while True:
+    userkey = stdscr.getch()
+    # 27 ESC, 113 is q
+    if userkey in [27, 113]:
+      break;
+    elif userkey in [curses.KEY_RIGH]:
+      nc = c + 1
+
+    
 
 curses.wrapper(sweeper)
