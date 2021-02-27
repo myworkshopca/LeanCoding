@@ -51,11 +51,15 @@ def initfield(center, size):
 
     return field
 
-def paintfield(stdscr, field, size, colors):
+def paintfield(stdscr, field, size):
 
     for r in range(0, size[0]):
         for c in range(0, size[1]):
-            paintcell(stdscr, field[r][c], colors)
+            if field[r][c][2] == -1:
+                stdscr.addstr(field[r][c][0], field[r][c][1], chr(10041))
+            else:
+                #stdscr.addstr(field[r][c][0], field[r][c][1], chr(9608))
+                stdscr.addstr(field[r][c][0], field[r][c][1], str(field[r][c][2]))
 
 def colordict():
 
@@ -70,7 +74,7 @@ def colordict():
         "flag": curses.color_pair(12), # yellow
         "blasted": curses.color_pair(233),
         #"-1": curses.color_pair(16),
-        "-1": curses.color_pair(10),
+        "-1": curses.color_pair(53),
         "0": curses.color_pair(1),
         "1": curses.color_pair(13), # blue
         "2": curses.color_pair(48), # Green
@@ -82,58 +86,41 @@ def colordict():
         "8": curses.color_pair(178), #
     }
 
-def paintcell(stdscr, cell, colors, reverse=False):
-
-    # decide the cell character and color.
-    if cell[2] == -1:
-        cell_ch = chr(10041)
-    else:
-        cell_ch = str(cell[2])
-
-    cell_color = colors[str(cell[2])]
-    if reverse:
-        cell_color = curses.A_REVERSE
-
-    stdscr.addstr(cell[0], cell[1], cell_ch, cell_color)
-
 def sweeper(stdscr):
 
     curses.curs_set(0)
 
     sh, sw = stdscr.getmaxyx()
     center = [sh // 2, sw // 2]
-    colors = colordict()
 
-    size = [20, 30]
+    size = [10, 20]
     field = initfield(center, size)
 
-    paintfield(stdscr, field, size, colors)
+    paintfield(stdscr, field, size)
 
     r, c = 0, 0
-    paintcell(stdscr, field[r][c], colors, True)
-    #stdscr.addstr(field[r][c][0]
+    nr, nc = 0, 0 
+    stdscr.addstr(field[r][c][0], field[r][c][1], str(field[r][c][2]), curses.A_REVERSE)
 
-    stdscr.getch()
+    while True:
 
-    #while True:
+        userkey = stdscr.getch()
 
-    #    userkey = stdscr.getch()
+        if userkey == 29:
+            break
+        elif userkey == curses.KEY_RIGHT:
+            nr = r
+            nc = c + 1
+        elif userkey == curses.KEY_LEFT:
+            nr = r
+            nc = c - 1
 
-    #    if userkey == 29:
-    #        break
-    #    elif userkey == curses.KEY_RIGHT:
-    #        nr = r
-    #        nc = c + 1
-    #    elif userkey == curses.KEY_LEFT:
-    #        nr = r
-    #        nc = c - 1
-
-    #    # paint the current cell normally
-    #    stdscr.addstr(field[r][c][0], field[r][c][1], str(field[r][c][2]))
-    #    # the new cell reverse.
-    #    stdscr.addstr(field[nr][nc][0], field[nr][nc][1], str(field[nr][nc][2]), curses.A_REVERSE)
-    #    r = nr
-    #    c = nc
+        # paint the current cell normally
+        stdscr.addstr(field[r][c][0], field[r][c][1], str(field[r][c][2]))
+        # the new cell reverse.
+        stdscr.addstr(field[nr][nc][0], field[nr][nc][1], str(field[nr][nc][2]), curses.A_REVERSE)
+        r = nr
+        c = nc
 
 curses.wrapper(sweeper)
 #print(initfield([20, 20], [4, 4]))
