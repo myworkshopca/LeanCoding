@@ -2,6 +2,9 @@ import curses
 import random
 import math
 
+def debugmsg(stdscr, field, r, c, show_surrounding=False):
+    stdscr.addstr(0, 0, str(field[r][c]))
+
 def initfield(center, size):
 
     field = []
@@ -63,7 +66,12 @@ def colordict():
     curses.use_default_colors()
 
     for i in range(0, curses.COLORS):
-        curses.init_pair(i + 1, i, -1)
+        if i == 232:
+            # black on red background
+            curses.init_pair(i + 1, i, curses.COLOR_RED)
+        else:
+            # -1 is baack background
+            curses.init_pair(i + 1, i, -1)
 
     return {
         'cover': curses.color_pair(9),
@@ -100,14 +108,25 @@ def paintcell(stdscr, cell, colors, reverse=False, show=False):
         if cell[3] == "flagged":
             cell_ch = chr(9873)
             cell_color = colors["flag"]
+        elif cell[3] == "revealed":
+            cell_ch = str(cell[2])
+            cell_color = colors[cell_ch]
+        elif cell[3] == "blasted":
+            cell_ch = chr(10041)
+            cell_color = colors["blasted"]
     
     if reverse:
         cell_color = curses.A_REVERSE
 
     stdscr.addstr(cell[0], cell[1], cell_ch, cell_color)
 
-def digcell():
-    return
+def digcell(cell):
+
+    if cell[3] == 'covered':
+        if cell[2] < 0:
+            cell[3] = 'blasted'
+        else:
+            cell[3] = 'revealed'
 
 def flagcell(cell):
 
@@ -134,7 +153,7 @@ def sweeper(stdscr):
 
     r, c = 0, 0
     paintcell(stdscr, field[r][c], colors, True)
-    #stdscr.addstr(field[r][c][0]
+    debugmsg(stdscr, field, r, c)
     nr, nc = 0, 0
 
     while True:
@@ -155,7 +174,7 @@ def sweeper(stdscr):
             if r > 0:
                 nr = r - 1
         elif userkey == 100:
-            digcell()
+            digcell(field[r][c])
         elif userkey == 102:
             # f 102
             flagcell(field[r][c])
@@ -169,6 +188,7 @@ def sweeper(stdscr):
         # reset current cell's index.
         r = nr
         c = nc
+        debugmsg(stdscr, field, r, c)
 
 curses.wrapper(sweeper)
 #print(initfield([20, 20], [4, 4]))
