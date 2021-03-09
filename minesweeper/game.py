@@ -3,7 +3,19 @@ import random
 import math
 
 def debugmsg(stdscr, field, r, c, show_surrounding=False):
+
+    # paint the current cell's values.
     stdscr.addstr(0, 0, str(field[r][c]))
+
+    for sr in [r - 1, r, r + 1]:
+        for sc in [c - 1, c, c + 1]:
+            # surrounding cell
+            scell = field[sr][sc]
+            if scell[2] == -1:
+                ch = chr(10041)
+            else:
+                ch = str(scell[2])
+            stdscr.addstr((sr - (r - 1)) + 1, (sc - (c - 1)) * 2, ch)
 
 def initfield(center, size):
 
