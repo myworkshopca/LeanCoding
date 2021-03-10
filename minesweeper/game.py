@@ -2,7 +2,7 @@ import curses
 import random
 import math
 
-def debugmsg(stdscr, field, r, c, show_surrounding=False):
+def debugmsg(stdscr, field, r, c, colors):
 
     # paint the current cell's values.
     stdscr.addstr(0, 0, str(field[r][c]))
@@ -20,9 +20,15 @@ def debugmsg(stdscr, field, r, c, show_surrounding=False):
             scell = field[sr][sc]
             if scell[2] == -1:
                 ch = chr(10041)
+                color = colors['-1']
             else:
                 ch = str(scell[2])
-            stdscr.addstr(y, x, ch)
+                color = colors[ch]
+
+            if sc == c and sr == r:
+                color = curses.A_REVERSE
+                
+            stdscr.addstr(y, x, ch, color)
 
 def initfield(center, size):
 
@@ -172,7 +178,7 @@ def sweeper(stdscr):
 
     r, c = 0, 0
     paintcell(stdscr, field[r][c], colors, True)
-    debugmsg(stdscr, field, r, c)
+    debugmsg(stdscr, field, r, c, colors)
     nr, nc = 0, 0
 
     while True:
@@ -207,7 +213,7 @@ def sweeper(stdscr):
         # reset current cell's index.
         r = nr
         c = nc
-        debugmsg(stdscr, field, r, c)
+        debugmsg(stdscr, field, r, c, colors)
 
 curses.wrapper(sweeper)
 #print(initfield([20, 20], [4, 4]))
