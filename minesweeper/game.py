@@ -9,13 +9,20 @@ def debugmsg(stdscr, field, r, c, show_surrounding=False):
 
     for sr in [r - 1, r, r + 1]:
         for sc in [c - 1, c, c + 1]:
+            # calculate the y and x axis for this cell.
+            y = (sr - (r - 1)) + 1
+            x = (sc - (c - 1)) * 2
+            if (sc < 0 or sc > len(field[0]) - 1 or
+                sr < 0 or sr > len(field) - 1):
+                stdscr.addstr(y, x, ' ')
+                continue
             # surrounding cell
             scell = field[sr][sc]
             if scell[2] == -1:
                 ch = chr(10041)
             else:
                 ch = str(scell[2])
-            stdscr.addstr((sr - (r - 1)) + 1, (sc - (c - 1)) * 2, ch)
+            stdscr.addstr(y, x, ch)
 
 def initfield(center, size):
 
