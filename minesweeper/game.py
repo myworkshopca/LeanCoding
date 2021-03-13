@@ -5,17 +5,22 @@ import math
 def debugmsg(stdscr, field, r, c, colors):
 
     # paint the current cell's values.
-    stdscr.addstr(0, 0, str(field[r][c]))
+    stdscr.addstr(0, 0, " " * 40)
+    stdscr.addstr(0, 0, "r = {0}, c = {1} ".format(r, c))
+    stdscr.addstr(str(field[r][c]))
 
     for sr in [r - 1, r, r + 1]:
         for sc in [c - 1, c, c + 1]:
             # calculate the y and x axis for this cell.
             y = (sr - (r - 1)) + 1
             x = (sc - (c - 1)) * 2
+
+            # bounds checking
             if (sc < 0 or sc > len(field[0]) - 1 or
                 sr < 0 or sr > len(field) - 1):
                 stdscr.addstr(y, x, ' ')
                 continue
+
             # surrounding cell
             scell = field[sr][sc]
             if scell[2] == -1:
@@ -25,6 +30,7 @@ def debugmsg(stdscr, field, r, c, colors):
                 ch = str(scell[2])
                 color = colors[ch]
 
+            # set reverse color for current cell
             if sc == c and sr == r:
                 color = curses.A_REVERSE
                 
@@ -217,3 +223,11 @@ def sweeper(stdscr):
 
 curses.wrapper(sweeper)
 #print(initfield([20, 20], [4, 4]))
+
+
+
+
+
+
+
+
