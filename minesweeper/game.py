@@ -61,6 +61,7 @@ def initfield(center, size):
         r = index // size[1]
         c = index - r * size[1]
         if field[r][c][2] == -1:
+            # skip the cell if it already has bomb.
             continue
         else:
             field[r][c][2] = -1
@@ -75,7 +76,7 @@ def initfield(center, size):
 
             for sr in [r - 1, r, r + 1]:
                 for sc in [c - 1, c, c + 1]:
-                    if sr < 0 or sr >= size[0] or sc < 0 or sc >= size[1]:
+                    if sr < 0 or sr >= len(field) or sc < 0 or sc >= len(field[0]):
                         continue # skip
                     elif sr == r and sc == c:
                         continue # skip
@@ -166,8 +167,17 @@ def flagcell(cell):
     elif cell[3] == "flagged":
         cell[3] = "covered"
 
-def opensurrounding():
-    return
+def opensurrounding(stdscr, field, r, c, colors):
+
+    if field[r][c][3] != 'revealed':
+        return
+
+    # go through all surrounding cells
+    for sr in [r - 1, r, r + 1]:
+        for sc in [c - 1, c, c + 1]:
+            # check the bounds
+            # check if the surrounding cell is same with current cell.
+            return
 
 def sweeper(stdscr):
 
@@ -209,8 +219,9 @@ def sweeper(stdscr):
         elif userkey == 102:
             # f 102
             flagcell(field[r][c])
+        # 32 is the white space key.
         elif userkey == 32:
-            opensurrounding()
+            opensurrounding(stdscr, field, r, c, colors)
 
         # paint the current cell normally
         paintcell(stdscr, field[r][c], colors)
