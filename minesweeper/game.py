@@ -86,11 +86,11 @@ def initfield(center, size):
 
     return field
 
-def paintfield(stdscr, field, size, colors):
+def paintfield(stdscr, field, size, colors, show=False):
 
     for r in range(0, size[0]):
         for c in range(0, size[1]):
-            paintcell(stdscr, field[r][c], colors)
+            paintcell(stdscr, field[r][c], colors, False, show)
 
 def colordict():
 
@@ -179,20 +179,26 @@ def opensurrounding(stdscr, field, r, c, colors):
             # check if the surrounding cell is same with current cell.
             return
 
-def sweeper(stdscr):
+def gameover(stdscr, field, center, size, colors):
 
-    curses.curs_set(0)
+    # show the whole field.
+    paintfield(stdscr, field, size, colors, True)
+    # paint the game over message.
+    stdscr.addstr(5, center[1], "GAME OVER", colors['blasted'])
+    # turn off the nodelay (none-blocking mode).
+    # reset the timeout
+    #stdscr.nodelay(False)
+    #stdscr.timeout
 
-    sh, sw = stdscr.getmaxyx()
-    center = [sh // 2, sw // 2]
-    colors = colordict()
+# the actural game.
+def thegame(stdscr, center, size, colors):
 
-    size = [20, 30]
     field = initfield(center, size)
 
     paintfield(stdscr, field, size, colors)
 
     r, c = 0, 0
+    # reverse
     paintcell(stdscr, field[r][c], colors, True)
     debugmsg(stdscr, field, r, c, colors)
     nr, nc = 0, 0
@@ -216,12 +222,17 @@ def sweeper(stdscr):
                 nr = r - 1
         elif userkey == 100:
             digcell(field[r][c])
+            if field[r][c][2] == -1:
+                gameover(stdscr, field, center, size, colors)
+                # break out the game loop.
+                break
         elif userkey == 102:
             # f 102
             flagcell(field[r][c])
         # 32 is the white space key.
         elif userkey == 32:
             opensurrounding(stdscr, field, r, c, colors)
+            # TODO: breakout game loop
 
         # paint the current cell normally
         paintcell(stdscr, field[r][c], colors)
@@ -231,6 +242,24 @@ def sweeper(stdscr):
         r = nr
         c = nc
         debugmsg(stdscr, field, r, c, colors)
+
+def sweeper(stdscr):
+
+    # turn off the default cursor
+    curses.curs_set(0)
+
+    sh, sw = stdscr.getmaxyx()
+    center = [sh // 2, sw // 2]
+    colors = colordict()
+
+    # set up size
+    size = [20, 30]
+
+    # start play the game.
+    thegame(stdscr, center, size, colors)
+
+    # hold the screen.
+    stdscr.getch()
 
 curses.wrapper(sweeper)
 #print(initfield([20, 20], [4, 4]))
