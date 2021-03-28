@@ -251,15 +251,22 @@ def sweeper(stdscr):
     sh, sw = stdscr.getmaxyx()
     center = [sh // 2, sw // 2]
     colors = colordict()
-
     # set up size
     size = [20, 30]
 
     # start play the game.
     thegame(stdscr, center, size, colors)
 
-    # hold the screen.
-    stdscr.getch()
+    while True:
+
+        userkey = stdscr.getch()
+        if userkey in [ord('q')]:
+            break;
+        elif userkey in [ord('n')]:
+            # start play the game.
+            thegame(stdscr, center, size, colors)
+        else:
+            continue
 
 curses.wrapper(sweeper)
 #print(initfield([20, 20], [4, 4]))
